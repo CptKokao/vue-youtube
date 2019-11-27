@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import "materialize-css/dist/js/materialize.min";
 
 Vue.use(VueRouter);
 
