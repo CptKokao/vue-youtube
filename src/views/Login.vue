@@ -2,23 +2,25 @@
   <form class="card auth-card" @submit.prevent="submitHandler">
     <div class="card-content">
       <span class="card-title">Домашняя бухгалтерия</span>
+      <!-- валидация email -->
       <div class="input-field">
         <input 
           id="email"
           type="text"
           v-model.trim="email"
-          :class="{invalid: ($v.email.$dirty && !$v.email.$required) || ($v.email.$dirty && !$v.email.email)}"
+          :class="{invalid: ($v.email.$dirty && !$v.email.required) || ($v.email.$dirty && !$v.email.email)}"
         >
         <label for="email">Email</label>
         <small 
           class="helper-text invalid"
-          v-if="$v.email.$dirty && !$v.email.$required" 
+          v-if="$v.email.$dirty && !$v.email.required" 
         >Поле Email не должно быть пустым</small>
         <small 
           class="helper-text invalid"
           v-else-if="$v.email.$dirty && !$v.email.email" 
         >Введите корректный email</small>
       </div>
+      <!-- валидация password -->
       <div class="input-field">
         <input 
           id="password" 
@@ -26,7 +28,15 @@
           v-model.trim="password"
         >
         <label for="password">Пароль</label>
-        <small class="helper-text invalid">Password</small>
+        <small 
+          class="helper-text invalid"
+          v-if="$v.password.$dirty && !$v.password.required" 
+        >Поле Пароль не должно быть пустым</small>
+        <small 
+          class="helper-text invalid"
+          v-else-if="$v.password.$dirty && !$v.password.minLength" 
+        >Длина пароля должна быть не менее {{ $v.password.$params.minLength.min }} символов. Сейчас он имеет {{ password.length }} символов.</small>
+      </div>
       </div>
     </div>
     <div class="card-action">
@@ -56,15 +66,20 @@ export default {
   }),
   validations: {
     email: {email, required},
-    password: {required, minLength: minLength(6)}
+    password: {required, minLength: minLength(8)}
   },
   methods: {
     submitHandler () {
       if (this.$v.$invalid) {
         this.$v.$touch();
-        console.log(this.$v.email);
         return;
       }
+      const formData = {
+        email: this.email,
+        password: this.password
+      }
+      
+      console.log(formData);
       this.$router.push("/");
     }
   }
