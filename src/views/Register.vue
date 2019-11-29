@@ -61,11 +61,11 @@
           />
           <span>С правилами согласен</span>
         </label>
-        <p><small
+        <br>
+        <small
           class="helper-text invalid"
           v-if="$v.name.$dirty && !$v.checkbox.checked" 
         >Вы должны согласиться с правилами</small></p>
-      </p>
     </div>
     <div class="card-action">
       <div>
