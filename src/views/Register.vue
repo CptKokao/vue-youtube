@@ -101,7 +101,7 @@ export default {
     checkbox: {checked: v => v}
   },
   methods: {
-    submitHandler () {
+    async submitHandler () {
       if (this.$v.$invalid) {
         console.log(this.$v.checkbox);
         this.$v.$touch();
@@ -109,11 +109,14 @@ export default {
       }
       const formData = {
         email: this.email,
-        password: this.password
+        password: this.password,
+        name: this.name
       }
-      
-      console.log(formData);
-      this.$router.push("/");
+      try {
+        await this.$store.dispatch("register", formData);
+        console.log(321);
+        this.$router.push("/");
+      } catch (e) {}
     }
   }
 }
