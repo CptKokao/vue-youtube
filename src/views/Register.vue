@@ -103,7 +103,6 @@ export default {
   methods: {
     async submitHandler () {
       if (this.$v.$invalid) {
-        console.log(this.$v.checkbox);
         this.$v.$touch();
         return;
       }
@@ -114,7 +113,6 @@ export default {
       }
       try {
         await this.$store.dispatch("register", formData);
-        console.log(321);
         this.$router.push("/");
       } catch (e) {}
     }
