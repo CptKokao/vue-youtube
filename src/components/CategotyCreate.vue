@@ -24,7 +24,7 @@
           <input 
             id="limit" 
             type="number"
-            v-model="limit" 
+            v-model.number="limit" 
             :class="{invalid: $v.limit.$dirty && !$v.limit.minValue}"  
           />
           <label for="limit">Лимит</label>
@@ -59,11 +59,26 @@ export default {
     M.updateTextFields();
   },
   methods: {
-    create () {
+    async create () {
       if (this.$v.$invalid) {
         this.$v.$touch();
         return;
       }
+
+      try {
+        const category = await this.$store.dispatch('createCategory', {
+          name: this.name,
+          limit: this.limit
+        })
+        this.name = "";
+        this.limit = 100;
+        this.$v.$reset();
+        this.$message('Категория была создана')
+        this.$emit('created', category);
+
+      } catch (e) {}
+
+
     }
   }
 }
