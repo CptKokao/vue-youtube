@@ -3,14 +3,23 @@ import firebase from "firebase/app";
 
 export default {
   actions: {
+    // обновляем категории
+    async updateCategory({commit, dispatch}, {id, name, limit}) {
+
+      try {
+        const uid = await dispatch('getUid');
+        const categories = await firebase.database().ref(`/users/${uid}/categories`).child(id).update({name, limit}); 
+      } catch (e) { 
+        commit('setError', e)
+        throw e;
+      }
+    },
     // получаем категории
     async fetchCategories({commit, dispatch}) {
 
       try {
         const uid = await dispatch('getUid');
         const categories = (await firebase.database().ref(`/users/${uid}/categories`).once('value')).val() || {};
-        
-
         const cats = [];
         Object.keys(categories).map(function(key){
           cats.push({
@@ -19,7 +28,7 @@ export default {
             id: key
           })
         })
-        console.log(cats)
+        return cats;
       } catch (e) { 
         commit('setError', e)
         throw e;
