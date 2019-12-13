@@ -83,7 +83,7 @@
 
 <script>
 import {required, minValue} from 'vuelidate/lib/validators';
-import {getters} from 'vuex';
+import {mapGetters} from 'vuex';
 
 export default {
   name: "record",
@@ -102,7 +102,7 @@ export default {
     description: {required}
   },
   computed: {
-    ...getters(["info"]),
+    ...mapGetters(["info"]),
     canCreateRecord () {
       if (this.type === "income") {
         return true
@@ -118,18 +118,30 @@ export default {
         return;
       }
 
-      if (canCreateRecord) {
-        console.log("OK")
+      if (this.canCreateRecord) {
+        try {
+          await this.$store.dispatch("createRecord", {
+            categoryId: this.category,
+            amount: this.amount,
+            description: this.description,
+            type: this.type,
+            date: new Date().toJSON()
+          });
+          const bill = this.type === "income"
+            ? this.info.bill + this.amount
+            : this.info.bill - this.amount
+
+          await this.$store.dispatch("updateInfo", {bill})
+          this.$message("Запись успешно создана");
+          this.$v.$reset();
+          this.amount = 1;
+          this.description = "";
+        } catch (e) {}
       } else {
         this.$message(`Недостаточно средств на счете" ${this.amount - this.info.bill}`);
       }
 
-      try {
 
-        // await this.$store.dispatch('updateCategory', categoryData);
-        // this.$message('Категория была обновлена')
-        // this.$emit('updated', categoryData)
-      } catch (e) {}
     }
   },
   async mounted() {
